@@ -1,12 +1,23 @@
 # Physics and motor model
 
-![Spring mechanics](../assets/physics.svg)
-
 > **Scope:** exact mechanics of the existing two-sphere crawler, plus explicit future alternatives. This is an engineering prototype, not validated biomechanics.
+
+```mermaid
+flowchart LR
+    A["Body A<br/>mass 1 kg"]
+    S["Spring and damper<br/>controlled target length"]
+    B["Body B<br/>mass 1 kg"]
+    A <-->|"F spring"| S
+    S <-->|"opposite F spring"| B
+    E["Avian: gravity and contact"] -.-> A
+    E -.-> B
+    K["External grip approximation"] -.-> A
+    K -.-> B
+```
 
 ## 1. Coordinate system and body
 
-Bevy/Avian use a 3D world with **Y upward**, gravity downward, and locomotion currently mainly along **X**. The ground collider in the published code is a box **200 × 0.2 × 40**, centered at \((0,-0.1,0)\), so its upper face is \(Y=0\).
+Bevy/Avian use a 3D world with **Y upward**, gravity downward, and locomotion currently mainly along **X**. The ground collider in the published code is a box **200 × 0.2 × 40**, centered at $(0,-0.1,0)$, so its upper face is $Y=0$.
 
 There are two sphere bodies:
 
@@ -14,17 +25,17 @@ There are two sphere bodies:
 |---|---:|---:|
 | Radius | 0.25 m | 0.25 m |
 | Mass | 1.0 kg | 1.0 kg |
-| Starting position | \((-0.6,0.27,0)\) | \((0.6,0.27,0)\) |
+| Starting position | $(-0.6,0.27,0)$ | $(0.6,0.27,0)$ |
 | Body type | Dynamic | Dynamic |
 | Rotation | Locked | Locked |
 | Collider | Sphere | Sphere |
 | Contact friction component | 0.0 | 0.0 |
 
-The logical \`Creature\` holds their entity IDs. The Bevy/Avian physics components are the source of truth for position/velocity.
+The logical `Creature` holds their entity IDs. The Bevy/Avian physics components are the source of truth for position/velocity.
 
 ## 2. Spring geometry
 
-Given positions \(\mathbf{x}_a\) and \(\mathbf{x}_b\):
+Given positions $\mathbf{x}_a$ and $\mathbf{x}_b$:
 
 $$
 \mathbf{d}=\mathbf{x}_b-\mathbf{x}_a,\quad
@@ -32,9 +43,9 @@ $$
 \hat{\mathbf d}=\frac{\mathbf d}{\ell}.
 $$
 
-The implementation skips a force step if \(\ell<10^{-4}\), to avoid division by zero.
+The implementation skips a force step if $\ell<10^{-4}$, to avoid division by zero.
 
-Neural motor output \(u_m\in[-1,1]\) changes desired spring length:
+Neural motor output $u_m\in[-1,1]$ changes desired spring length:
 
 $$
 \ell_t=\max\left(0.3,\;\ell_0+A\,u_m\right).
@@ -56,7 +67,7 @@ These are **target lengths**, not bounds on actual separation. The observed phys
 
 ## 3. Hooke's law and damping
 
-Define axial extension \(e=\ell-\ell_t\). The restoring force acting on body **a** is
+Define axial extension $e=\ell-\ell_t$. The restoring force acting on body **a** is
 
 $$
 \mathbf F_a =
@@ -75,9 +86,9 @@ $$
 \mathbf F_b=-\mathbf F_a.
 $$
 
-Current coefficients are \(k=70\ {\rm N/m}\) and \(c=5\ {\rm N\,s/m}\) in the source-defined model.
+Current coefficients are $k=70\ {\rm N/m}$ and $c=5\ {\rm N\,s/m}$ in the source-defined model.
 
-The damping sign is significant. If the bodies separate (\(v_{\rm axial}>0\)), damping pulls them together; if they approach, it resists approach. With positive \(c\), the damper dissipates relative kinetic energy.
+The damping sign is significant. If the bodies separate ($v_{\rm axial}>0$), damping pulls them together; if they approach, it resists approach. With positive $c$, the damper dissipates relative kinetic energy.
 
 A convenient interpretation of spring potential for a **fixed** target length is:
 
@@ -85,7 +96,7 @@ $$
 U_s=\frac12 k(\ell-\ell_t)^2.
 $$
 
-But when \(\ell_t(t)\) is actively commanded by a motor, \(U_s\) is not a complete energy accounting: changing rest length injects/removes mechanical work.
+But when $\ell_t(t)$ is actively commanded by a motor, $U_s$ is not a complete energy accounting: changing rest length injects/removes mechanical work.
 
 ## 4. Free MHS limit
 
@@ -103,7 +114,7 @@ $$
 =\sqrt{k\left(\frac1{m_a}+\frac1{m_b}\right)}.
 $$
 
-For equal masses \(m_a=m_b=m=1\) kg:
+For equal masses $m_a=m_b=m=1$ kg:
 
 $$
 \omega_n=\sqrt{\frac{2k}{m}}
@@ -126,19 +137,19 @@ $$
 \zeta=\frac{c}{\sqrt{2km}}.
 $$
 
-With the current parameters this is about \(0.423\), *for the ideal free oscillator only*. The real simulation includes commanded rest length and ground forces.
+With the current parameters this is about $0.423$, *for the ideal free oscillator only*. The real simulation includes commanded rest length and ground forces.
 
 ## 5. Gravity and normal contact
 
-Avian handles gravity, rigid-body integration and contact. At rest on horizontal ground, a 1 kg sphere has \(mg\approx9.81\) N of gravitational load and a corresponding reaction if the contact is stable.
+Avian handles gravity, rigid-body integration and contact. At rest on horizontal ground, a 1 kg sphere has $mg\approx9.81$ N of gravitational load and a corresponding reaction if the contact is stable.
 
-The height \(y\approx0.25\) observed in earlier telemetry shows contact geometry is behaving plausibly. It does **not** verify all contact dynamics.
+The height $y\approx0.25$ observed in earlier telemetry shows contact geometry is behaving plausibly. It does **not** verify all contact dynamics.
 
 ## 6. The current locomotion mechanism (important!)
 
-The working crawler did not advance reliably when only high/low \`Friction\` coefficients were toggled on spheres. The experiment temporarily set sphere friction to **zero** and applied a custom resistive horizontal force when each sphere is near the ground.
+The working crawler did not advance reliably when only high/low `Friction` coefficients were toggled on spheres. The experiment temporarily set sphere friction to **zero** and applied a custom resistive horizontal force when each sphere is near the ground.
 
-For grip command \(g_i\in[0,1]\):
+For grip command $g_i\in[0,1]$:
 
 $$
 \mathbf v_{i,xz}=(v_{i,x},0,v_{i,z}),\qquad
@@ -147,9 +158,9 @@ $$
 - C g_i\,\mathbf v_{i,xz},F_{\max}g_i\right),
 $$
 
-where \(C=45\), \(F_{\max}=35\) in the current source.
+where $C=45$, $F_{\max}=35$ in the current source.
 
-The force is applied only if the body's center is at or below \(0.25+0.04=0.29\) m.
+The force is applied only if the body's center is at or below $0.25+0.04=0.29$ m.
 
 **Interpretation:** velocity-proportional resistive damping, capped in magnitude, acting as a simplified active ground interaction.
 
@@ -159,11 +170,11 @@ The force is applied only if the body's center is at or below \(0.25+0.04=0.29\)
 - static/dynamic Coulomb friction;
 - a general-purpose model of deformable limbs.
 
-For \(\mathbf v_{xz}\ne 0\), it opposes velocity and therefore dissipates energy. The grip force is **external** to the two-mass system, so it can change center-of-mass momentum. The internal spring force alone cannot do so.
+For $\mathbf v_{xz}\ne 0$, it opposes velocity and therefore dissipates energy. The grip force is **external** to the two-mass system, so it can change center-of-mass momentum. The internal spring force alone cannot do so.
 
 ## 7. Observed diagnostics and causal experiment
 
-Previous exploratory runs found a nearly constant center X and spring length when the symmetric spheres were assigned strong contact grip. With physical friction disabled, length oscillated substantially while the center remained at \(x=0\), consistent with paired internal forces. With the custom asymmetric grip force restored, a visible forward displacement was observed.
+Previous exploratory runs found a nearly constant center X and spring length when the symmetric spheres were assigned strong contact grip. With physical friction disabled, length oscillated substantially while the center remained at $x=0$, consistent with paired internal forces. With the custom asymmetric grip force restored, a visible forward displacement was observed.
 
 This establishes a useful **prototype behavior**, not a validated locomotion mechanism. Future experiments must record signed displacement, contact status and energy expenditure.
 
@@ -171,7 +182,7 @@ This establishes a useful **prototype behavior**, not a validated locomotion mec
 
 Essential planned tests:
 
-1. **No-actuation control:** \(A=0\), compare settling time against damped oscillator expectations.
+1. **No-actuation control:** $A=0$, compare settling time against damped oscillator expectations.
 2. **Momentum:** remove ground/gravity and verify equal-and-opposite spring forces preserve center-of-mass momentum within numerical tolerance.
 3. **Energy:** passive spring + damping should not increase total mechanical energy except for integrator error; separate work done by the actuator.
 4. **Convergence:** compare results when the fixed time step is halved.

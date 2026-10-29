@@ -1,8 +1,8 @@
-# \`world/\` — The physical environment
+# `world/` — The physical environment
 
-**Implemented on the inspected GitHub revision:** a static 200 × 0.2 × 40 m ground cuboid centered at \((0,-0.1,0)\), with its top at \(Y=0\). The world plugin registers the setup system at startup.
+**Implemented on the inspected GitHub revision:** a static 200 × 0.2 × 40 m ground cuboid centered at $(0,-0.1,0)$, with its top at $Y=0$. The world plugin registers the setup system at startup.
 
-The floor includes mesh, material, \`RigidBody::Static\`, matching \`Collider::cuboid\`, and \`Friction::new(1.0)\`.
+The floor includes mesh, material, `RigidBody::Static`, matching `Collider::cuboid`, and `Friction::new(1.0)`.
 
 ## Why this module exists
 
@@ -20,7 +20,5 @@ The committed floor is finite. A follow camera may continue moving after the cre
 - Temperature/light/chemical gradients, if later justified.
 - Multi-organism collision/competition testbeds.
 - Reproducible world generation seeded per experiment.
-
-![Ecology concept](../../assets/ecosystem.svg)
 
 See [Artificial-life design](../../docs/artificial-life.md).

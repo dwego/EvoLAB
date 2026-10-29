@@ -33,12 +33,12 @@ Do not make fitness claims until a candidate is evaluated against at least basel
 
 Define position and time in consistent SI units and record at fixed cadence.
 
-- \(\Delta x\): signed center-of-mass displacement.
-- \(\bar v_x = \Delta x/T\): average forward speed.
-- \(E_{\rm actuator}\): work/consumption proxy—requires explicit modeling.
-- \(\eta\): locomotion efficiency (once energy is implemented).
-- \(t_{\rm alive}\): survival duration in resource scenarios.
-- \(N_{\rm viable\,offspring}\): evolutionary persistence.
+- $\Delta x$: signed center-of-mass displacement.
+- $\bar v_x = \Delta x/T$: average forward speed.
+- $E_{\rm actuator}$: work/consumption proxy—requires explicit modeling.
+- $\eta$: locomotion efficiency (once energy is implemented).
+- $t_{\rm alive}$: survival duration in resource scenarios.
+- $N_{\rm viable\,offspring}$: evolutionary persistence.
 - Stability: invalid contacts, NaNs, extreme forces and unstable dynamics.
 - Diversity: pairwise neural or behavioral distances.
 

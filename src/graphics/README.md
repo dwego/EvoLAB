@@ -1,13 +1,13 @@
-# \`graphics/\` — Visualization and instrumentation
+# `graphics/` — Visualization and instrumentation
 
 **Implemented**: camera, light and spring gizmo. **Not in the inspected remote revision**: committed grid, switchable cameras, scientific HUD.
 
 ## Files
 
-- \`scene.rs\`: camera and point light.
-- \`camera.rs\`: \`FollowCamera\` reads creature's mean position and uses exponential interpolation toward an offset viewpoint.
-- \`debug.rs\`: draws spring and phase-based grip markers; also contains a not-yet-registered \`trace_motion\` diagnostic.
-- \`mod.rs\`: schedules rendering and camera tracking before transform propagation.
+- `scene.rs`: camera and point light.
+- `camera.rs`: `FollowCamera` reads creature's mean position and uses exponential interpolation toward an offset viewpoint.
+- `debug.rs`: draws spring and phase-based grip markers; also contains a not-yet-registered `trace_motion` diagnostic.
+- `mod.rs`: schedules rendering and camera tracking before transform propagation.
 
 The camera uses a smoothing coefficient
 
@@ -24,5 +24,3 @@ The **red/green indicators are computed from cosine phase**, while the working n
 ## Next
 
 Add meters-aligned grid, fixed/top/orbit modes, camera-relative labels, energy meters, brain output values, fitness plots and playback controls. Visuals must observe simulation state, not change it.
-
-![Architecture](../../assets/architecture.svg)

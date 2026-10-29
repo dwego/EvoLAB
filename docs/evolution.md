@@ -1,8 +1,16 @@
 # Evolution engine — proposed design
 
-![Future evolution loop](../assets/evolution.svg)
-
 > **Not yet implemented.** This document is the design specification for future neuroevolution, not a description of a running optimizer.
+
+```mermaid
+flowchart TD
+    P["Generate candidate brains"] --> T["Run identical physics trials"]
+    T --> V["Evaluate metrics and validity"]
+    V --> S["Select parents"]
+    S --> M["Mutate descendants"]
+    M --> T
+    V --> R["Save champions and logs"]
+```
 
 ## Why evolution?
 

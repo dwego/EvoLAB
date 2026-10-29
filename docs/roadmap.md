@@ -19,7 +19,7 @@ This is a planning document, **not** a list of delivered features.
 ## Near-term engineering work
 
 1. Preserve the working crawler as a regression benchmark.
-2. Fix visual markers to show actual \`MotorCommands\`.
+2. Fix visual markers to show actual `MotorCommands`.
 3. Build a clean telemetry overlay in world coordinates.
 4. Add camera controls and an absolute-reference spatial grid.
 5. Decide on a robust physical-floor strategy.
@@ -34,8 +34,8 @@ This is a planning document, **not** a list of delivered features.
 - Sphere-body grip is a force approximation, not true static contact.
 - Physical friction is zero on the sphere colliders in the functional locomotion prototype.
 - The debug markers still encode a phase heuristic, not neural control outputs.
-- A \`trace_motion\` function exists but is not registered in the GitHub state inspected.
-- \`rand\` is a declared dependency but no evolutionary loop exists.
+- A `trace_motion` function exists but is not registered in the GitHub state inspected.
+- `rand` is a declared dependency but no evolutionary loop exists.
 - Only one neural test currently exists.
 - A finite ground plane is present in the documented remote version.
 - No policy serialization, world reset, fitness tracking, energy, food or offspring.

@@ -1,8 +1,16 @@
 # Artificial life: energy, resources and ecology
 
-![Conceptual EvoLab ecosystem](../assets/ecosystem.svg)
-
 > **Research direction only.** No food, metabolism, death, reproduction or evolutionary ecology exists in the current implementation.
+
+```mermaid
+flowchart LR
+    F["Food resources"] -->|"energy intake"| O["Organisms"]
+    O -->|"energy use"| E["Metabolism and motors"]
+    O -->|"enough energy"| R["Reproduction"]
+    R -->|"inherited, mutated genome"| D["Descendants"]
+    D --> O
+    E -->|"depletion"| X["Death and cleanup"]
+```
 
 ## Core question
 
@@ -52,7 +60,7 @@ This signed mechanical power is **not identical** to metabolic consumption. A re
 A proposed rule:
 
 - Require adulthood or minimum age (optional).
-- Require energy \(E\ge E_{\rm reproduction}\).
+- Require energy $E\ge E_{\rm reproduction}$.
 - Subtract offspring construction cost from parent.
 - Spawn an offspring with mutated inherited genome and its own initial energy.
 - Log parent ID, mutation seed, time, and location.

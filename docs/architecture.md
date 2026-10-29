@@ -1,6 +1,18 @@
 # Architecture and execution model
 
-![Architecture](../assets/architecture.svg)
+```mermaid
+flowchart TB
+    A["Bevy application"] --> B["Brain plugin"]
+    A --> C["Creature plugin"]
+    A --> P["Physics plugin"]
+    A --> W["World plugin"]
+    A --> G["Graphics plugin"]
+    C -->|"body IDs and genome"| P
+    B -->|"motor commands"| P
+    P -->|"physical state"| B
+    W -->|"terrain and collision"| P
+    P -->|"observed state"| G
+```
 
 ## Objectives
 
@@ -10,21 +22,21 @@ EvoLab should ultimately support interactive visualization **and** deterministic
 
 | Plugin | Implementation | Ownership |
 |---|---|---|
-| \`DefaultPlugins\` | Bevy | windows, rendering, scheduling, asset resources |
-| \`PhysicsPlugins::default()\` | Avian | rigid bodies, integration, contacts |
-| \`WorldPlugin\` | \`world/mod.rs\` | static ground |
-| \`BrainPlugin\` | \`brain/mod.rs\` | sensor sampling and network execution |
-| \`GraphicsPlugin\` | \`graphics/mod.rs\` | camera/light/visual debug |
-| \`CreaturePlugin\` | \`creatures/mod.rs\` | spawn organism and components |
-| \`SpringPhysicsPlugin\` | \`physics/mod.rs\` | spring and grip force systems |
+| `DefaultPlugins` | Bevy | windows, rendering, scheduling, asset resources |
+| `PhysicsPlugins::default()` | Avian | rigid bodies, integration, contacts |
+| `WorldPlugin` | `world/mod.rs` | static ground |
+| `BrainPlugin` | `brain/mod.rs` | sensor sampling and network execution |
+| `GraphicsPlugin` | `graphics/mod.rs` | camera/light/visual debug |
+| `CreaturePlugin` | `creatures/mod.rs` | spawn organism and components |
+| `SpringPhysicsPlugin` | `physics/mod.rs` | spring and grip force systems |
 
-The top-level \`main.rs\` composes these plugins and does not itself spawn geometry.
+The top-level `main.rs` composes these plugins and does not itself spawn geometry.
 
 ## ECS boundaries
 
-A \`Creature\` is a Bevy component, not a monolithic object containing copy-pasted position data. It stores \`masses: [Entity; 2]\`, a \`Genome\`, \`stiffness\`, \`damping\`, and \`elapsed\`. The physics engine stores \`Position\`, \`LinearVelocity\`, rigid-body and collider components on the two separate sphere entities.
+A `Creature` is a Bevy component, not a monolithic object containing copy-pasted position data. It stores `masses: [Entity; 2]`, a `Genome`, `stiffness`, `damping`, and `elapsed`. The physics engine stores `Position`, `LinearVelocity`, rigid-body and collider components on the two separate sphere entities.
 
-A \`NeuralController\` is attached to the same logical creature entity as \`Creature\`. It holds \`NeuralNetwork\` and the last \`MotorCommands\`. This allows the controller to consume physical observations and publish commands without directly mutating transforms.
+A `NeuralController` is attached to the same logical creature entity as `Creature`. It holds `NeuralNetwork` and the last `MotorCommands`. This allows the controller to consume physical observations and publish commands without directly mutating transforms.
 
 ### Data ownership rule
 
@@ -56,7 +68,7 @@ Each rendered frame:
     PostUpdate        camera::follow_creature
 ~~~
 
-In the actual code, spring and grip systems use \`.chain()\`, \`.after(PhysicsSystems::Prepare)\`, and \`.before(PhysicsSystems::StepSimulation)\`. The brain system is currently in \`FixedUpdate\`. This order matters: the physics step consumes the most recently calculated commands.
+In the actual code, spring and grip systems use `.chain()`, `.after(PhysicsSystems::Prepare)`, and `.before(PhysicsSystems::StepSimulation)`. The brain system is currently in `FixedUpdate`. This order matters: the physics step consumes the most recently calculated commands.
 
 **Current limitation:** the world step, rendering and fixed scheduling are still tied to the Bevy application. Running thousands of episodes quickly requires a repeatable reset/evaluation interface; simply hiding the window is not the finished architecture.
 
@@ -109,7 +121,7 @@ Use fixed-step simulation, explicit seeds and serialization of successful brains
 
 ## Architectural acceptance checklist
 
-- \`cargo check\` passes after each module change.
+- `cargo check` passes after each module change.
 - Every new plugin owns clearly named systems and state.
 - Pure mathematical modules have unit tests without graphics.
 - Experiment results include configuration and version information.
