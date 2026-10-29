@@ -4,4 +4,10 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-macroquad = "0.4.16"
+avian3d = "0.8"
+bevy = "0.20"
+rand = "0.10"
+
+[profile.dev]
+debug = 0
+incremental = false
