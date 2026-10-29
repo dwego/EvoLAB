@@ -1,3 +1,4 @@
+use crate::brain::NeuralController;
 use avian3d::prelude::*;
 use bevy::prelude::*;
 
@@ -5,12 +6,12 @@ use crate::creatures::Creature;
 
 pub fn apply_spring_forces(
     time: Res<Time<Fixed>>,
-    mut creatures: Query<&mut Creature>,
+    mut creatures: Query<(&mut Creature, &mut NeuralController)>,
     mut bodies: Query<Forces>,
 ) {
     let dt = time.delta_secs();
 
-    for mut creature in &mut creatures {
+    for (mut creature, controller) in &mut creatures {
         let Ok([mut a, mut b]) = bodies.get_many_mut(creature.masses) else {
             continue;
         };
@@ -29,8 +30,9 @@ pub fn apply_spring_forces(
         let phase = std::f32::consts::TAU * creature.genome.frequency * creature.elapsed
             + creature.genome.phase_offset;
 
-        let target_length =
-            (creature.genome.rest_length + creature.genome.amplitude * phase.sin()).max(0.3);
+        let target_length = (creature.genome.rest_length
+            + creature.genome.amplitude * controller.commands.muscle)
+            .max(0.3);
 
         // Hooke's law
         let extension = distance - target_length;

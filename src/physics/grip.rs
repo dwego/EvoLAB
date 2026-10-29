@@ -1,41 +1,43 @@
 use avian3d::prelude::*;
 use bevy::prelude::*;
 
+use crate::brain::NeuralController;
 use crate::creatures::Creature;
 
 const GRIP_DAMPING: f32 = 45.0;
 const MAX_GRIP_FORCE: f32 = 35.0;
 const FOOT_RADIUS: f32 = 0.25;
 
-pub fn apply_grip_forces(creatures: Query<&Creature>, mut bodies: Query<Forces>) {
-    for creature in &creatures {
-        let phase = std::f32::consts::TAU * creature.genome.frequency * creature.elapsed
-            + creature.genome.phase_offset;
-
-        // Expansion: left foot anchored.
-        // Contraction: right foot anchored.
-        let anchored_entity = if phase.cos() >= 0.0 {
-            creature.masses[0]
-        } else {
-            creature.masses[1]
-        };
-
-        let Ok(mut foot) = bodies.get_mut(anchored_entity) else {
+pub fn apply_grip_forces(
+    creatures: Query<(&Creature, &NeuralController)>,
+    mut bodies: Query<Forces>,
+) {
+    for (creature, controller) in &creatures {
+        let Ok([mut left, mut right]) = bodies.get_many_mut(creature.masses) else {
             continue;
         };
 
-        // Only apply grip near the ground.
-        if foot.position().y > FOOT_RADIUS + 0.04 {
-            continue;
+        let left_grip = controller.commands.left_grip;
+        let right_grip = controller.commands.right_grip;
+
+        if left.position().y <= FOOT_RADIUS + 0.04 {
+            let v = left.linear_velocity();
+            let horizontal = Vec3::new(v.x, 0.0, v.z);
+
+            let force = (-horizontal * GRIP_DAMPING * left_grip)
+                .clamp_length_max(MAX_GRIP_FORCE * left_grip);
+
+            left.apply_force(force);
         }
 
-        let velocity = foot.linear_velocity();
+        if right.position().y <= FOOT_RADIUS + 0.04 {
+            let v = right.linear_velocity();
+            let horizontal = Vec3::new(v.x, 0.0, v.z);
 
-        let horizontal_velocity = Vec3::new(velocity.x, 0.0, velocity.z);
+            let force = (-horizontal * GRIP_DAMPING * right_grip)
+                .clamp_length_max(MAX_GRIP_FORCE * right_grip);
 
-        // Viscous resistive force with a maximum magnitude.
-        let grip_force = (-horizontal_velocity * GRIP_DAMPING).clamp_length_max(MAX_GRIP_FORCE);
-
-        foot.apply_force(grip_force);
+            right.apply_force(force);
+        }
     }
 }

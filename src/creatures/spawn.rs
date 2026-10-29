@@ -1,3 +1,4 @@
+use crate::brain::NeuralController;
 use avian3d::prelude::*;
 use bevy::prelude::*;
 
@@ -47,5 +48,6 @@ pub fn spawn_first_creature(
             damping: 5.0,
             elapsed: 0.0,
         },
+        NeuralController::default(),
     ));
 }

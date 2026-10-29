@@ -1,3 +1,4 @@
+mod camera;
 mod debug;
 mod scene;
 
@@ -12,8 +13,8 @@ impl Plugin for GraphicsPlugin {
 
         app.add_systems(Update, debug::draw_springs);
         app.add_systems(
-            FixedPostUpdate,
-            debug::trace_motion.after(PhysicsSystems::Writeback),
+            PostUpdate,
+            camera::follow_creature.before(bevy::transform::TransformSystems::Propagate),
         );
     }
 }
