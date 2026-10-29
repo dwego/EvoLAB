@@ -15,11 +15,12 @@ pub fn spawn_first_creature(
             Name::new("Left Mass"),
             Mesh3d(mesh.clone()),
             MeshMaterial3d(materials.add(Color::srgb(0.2, 0.5, 1.0))),
-            Transform::from_xyz(-0.8, 2.0, 0.0),
+            Transform::from_xyz(-0.6, 0.27, 0.0),
             RigidBody::Dynamic,
             Collider::sphere(0.25),
             Mass(1.0),
             LockedAxes::ROTATION_LOCKED,
+            Friction::new(0.0).with_combine_rule(CoefficientCombine::Multiply),
         ))
         .id();
 
@@ -28,11 +29,12 @@ pub fn spawn_first_creature(
             Name::new("Right Mass"),
             Mesh3d(mesh),
             MeshMaterial3d(materials.add(Color::srgb(0.7, 0.3, 0.9))),
-            Transform::from_xyz(0.8, 2.0, 0.0),
+            Transform::from_xyz(0.6, 0.27, 0.0),
             RigidBody::Dynamic,
             Collider::sphere(0.25),
             Mass(1.0),
             LockedAxes::ROTATION_LOCKED,
+            Friction::new(0.0).with_combine_rule(CoefficientCombine::Multiply),
         ))
         .id();
 
@@ -41,8 +43,8 @@ pub fn spawn_first_creature(
         Creature {
             masses: [left, right],
             genome: Genome::default(),
-            stiffness: 35.0,
-            damping: 1.5,
+            stiffness: 70.0,
+            damping: 5.0,
             elapsed: 0.0,
         },
     ));

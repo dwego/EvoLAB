@@ -10,8 +10,8 @@ impl Default for Genome {
     fn default() -> Self {
         Self {
             rest_length: 1.2,
-            amplitude: 0.2,
-            frequency: 1.0,
+            amplitude: 0.35,
+            frequency: 1.2,
             phase_offset: 0.0,
         }
     }

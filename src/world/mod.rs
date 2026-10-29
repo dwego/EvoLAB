@@ -21,5 +21,6 @@ fn setup_world(
         Transform::from_xyz(0.0, -0.1, 0.0),
         RigidBody::Static,
         Collider::cuboid(20.0, 0.2, 20.0),
+        Friction::new(1.0).with_combine_rule(CoefficientCombine::Multiply),
     ));
 }
